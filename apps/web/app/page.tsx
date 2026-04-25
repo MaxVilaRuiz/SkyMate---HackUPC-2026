@@ -3,12 +3,17 @@
 import { ChatInput } from "@/components/chat/ChatInput";
 import { MessageBubble } from "@/components/chat/MessageBubble";
 import { useChat } from "@/hooks/useChat";
+import UserMenuButton from "@/components/UserMenuButton"; // <-- Importamos tu nuevo botón
 
 export default function HomePage() {
   const { messages, isLoading, sendMessage, hasStartedConversation } = useChat();
 
   return (
-    <main className="flex min-h-screen flex-col bg-gradient-to-b from-[#EAF6FF] via-white to-[#F8FBFF] text-slate-900">
+    <main className="relative flex min-h-screen flex-col bg-gradient-to-b from-[#EAF6FF] via-white to-[#F8FBFF] text-slate-900">
+      
+      {/* AQUÍ ESTÁ TU BOTÓN CLAVADO ARRIBA A LA IZQUIERDA */}
+      <UserMenuButton />
+
       {!hasStartedConversation ? (
         <section className="flex flex-1 flex-col items-center justify-center px-4">
           <div className="w-full max-w-3xl">

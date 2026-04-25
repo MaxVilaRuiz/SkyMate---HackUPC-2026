@@ -6,7 +6,7 @@ from langchain_core.tools import tool
 load_dotenv()
 API_KEY = os.getenv("SKYSCANNER_API_KEY")
 
-@tool
+
 def search_airport_code(search_term: str):
     """
     Returns the 3-letter IATA code for a given city or airport name.
@@ -44,12 +44,11 @@ def search_airport_code(search_term: str):
                 "iata": place.get("iataCode"),
                 "type": place.get("type")
             })
-            
 
+        
         return results
 
         
         
     except Exception as e:
         return {"error": f"Failed to fetch autosuggest: {str(e)}"}
-
