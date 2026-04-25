@@ -12,12 +12,12 @@ export function MessageBubble({ role, text }: MessageBubbleProps) {
     <div className={`flex w-full ${isUser ? "justify-end" : "justify-start"}`}>
       <div
         className={`
-          max-w-[85%] md:max-w-[70%] rounded-2xl px-4 py-3 
-          text-sm md:text-base leading-relaxed whitespace-pre-wrap
+          max-w-[88%] rounded-2xl px-4 py-3 text-sm leading-relaxed
+          whitespace-pre-wrap shadow-sm md:max-w-[72%] md:text-base
           ${
             isUser
-              ? "bg-white text-black"
-              : "bg-neutral-800 text-neutral-100 border border-neutral-700"
+              ? "bg-[#0770E3] text-white rounded-br-md"
+              : "bg-white text-slate-800 border border-sky-100 rounded-bl-md"
           }
         `}
       >
