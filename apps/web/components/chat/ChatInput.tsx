@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useChatInput } from "@/hooks/useChatInput";
 
 type ChatInputProps = {
   onSubmit: (prompt: string) => void | Promise<void>;
@@ -8,19 +8,13 @@ type ChatInputProps = {
 };
 
 export function ChatInput({ onSubmit, disabled = false }: ChatInputProps) {
-  const [prompt, setPrompt] = useState("");
-
-  const cleanPrompt = prompt.trim();
-  const isSubmitDisabled = disabled || cleanPrompt.length === 0;
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    if (isSubmitDisabled) return;
-
-    await onSubmit(cleanPrompt);
-    setPrompt("");
-  };
+  const {
+    prompt,
+    setPrompt,
+    isSubmitDisabled,
+    handleSubmit,
+    handleKeyDown,
+  } = useChatInput({ onSubmit, disabled });
 
   return (
     <form
@@ -32,6 +26,7 @@ export function ChatInput({ onSubmit, disabled = false }: ChatInputProps) {
         <textarea
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
+          onKeyDown={handleKeyDown}
           placeholder="Ask anything you want about travel..."
           rows={1}
           disabled={disabled}
@@ -44,7 +39,7 @@ export function ChatInput({ onSubmit, disabled = false }: ChatInputProps) {
           type="submit"
           disabled={isSubmitDisabled}
           className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#0770E3] text-white shadow-md transition hover:bg-[#065EC0] disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400"
-          aria-label="Enviar mensaje"
+          aria-label="Send message"
         >
           ↑
         </button>
