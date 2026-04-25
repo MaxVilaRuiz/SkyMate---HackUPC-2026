@@ -10,3 +10,7 @@ env/
 # Python cache
 *.pyo
 *.pyd
+
+#basurilla
+pyvenv.cfg
+*.pyd
