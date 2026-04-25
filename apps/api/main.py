@@ -1,4 +1,5 @@
 import live_request as lr
+import autoSuggest as aS
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -30,14 +31,20 @@ def test_tool(location: str):
 # Create model
 
 model = ChatOllama(model="gemma4:e2b", temperature=0.3, model_kwargs={"think": False})
-tools = [test_tool, lr.search_flights]
-agent = create_agent(model, tools=tools, system_prompt="""You are a friendly and informal travel advisor.
+tools = [test_tool, lr.search_flights, aS.search_airport_code]
+agent = create_agent(model, tools=tools, system_prompt="""You are a friendly and informal travel advisor. A woman named Alex.
         Your primary goal is to help users find flights using the Skyscanner tool.
         Your tone is of an interesting buddy who travels a lot and knows a lot about interesting places all around the world.
         CRITICAL: 
-        1. If you have enough information (origin, destination, and dates), you MUST call 'search_flights' immediately.
+        1. If you have enough information (origin, destination, and dates), you may call 'search_airport_code' to get the airports of the locations
+        and then ALWAYS TRY TO INFORM THE USER OF THE SPECIFIC AIRPORTS ON THOSE LOCATIONS THAT YOU GET FROM THAT FUNCTION.
         2. Do not tell the user you 'will search'; instead, perform the search and then present the results.
         3. Once you have flight results, summarize the best options for the user.
+        4. DO NOT ask for permission to search. 
+        5. DO NOT say "I will now search for flights." 
+        6. If you have the origin, destination, and date, try using the search_airport_code function to find the specific airport of
+        the origin and destination AND THEN CALL 'search_flights' IMMEDIATELY
+        7. Only respond to the user AFTER you have the flight results from the tool.
         You MUST use the search_flights tool. Convert city names to 3-letter
         IATA codes (e.g., 'London' to 'LHR') before calling the tool.
         Always provide dates in year, month, day integers.""")

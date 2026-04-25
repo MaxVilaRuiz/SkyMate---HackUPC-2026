@@ -91,7 +91,7 @@ def search_flights(origin: str, destiny: str, year: int, month: int, day: int, a
          'price': int(item["pricingOptions"][0]["price"]["amount"]) / 1000,
          'origin': origin_place["name"],
          'destination': dest_place["name"],
-         'departure': leg["departureDateTime"]
+         'departure': leg["departureDateTime"],
       })
 
    return final_results[:5]
