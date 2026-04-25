@@ -2,7 +2,6 @@ import requests
 import os
 from dotenv import load_dotenv
 
-print("El impostor está en:", requests.__file__)
 
 load_dotenv()  # Carga las variables de entorno desde el archivo .env
 
