@@ -1,75 +1,112 @@
 "use client";
 
 import { useState } from "react";
+import { ChatInput } from "@/components/chat/ChatInput";
+import { MessageBubble } from "@/components/chat/MessageBubble";
+import { sendPromptToBackend } from "@/lib/api/chat";
+import { ChatMessage } from "@/lib/types/chat";
 
 export default function HomePage() {
-  const [prompt, setPrompt] = useState("");
-  const [messages, setMessages] = useState<string[]>([]);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [conversationId, setConversationId] = useState<string | undefined>();
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const hasStartedConversation = messages.length > 0;
 
-    if (!prompt.trim()) return;
+  const handleSendPrompt = async (prompt: string) => {
+    const userMessage: ChatMessage = {
+      id: crypto.randomUUID(),
+      role: "user",
+      content: prompt,
+    };
 
-    setMessages((prev) => [...prev, prompt]);
-    setPrompt("");
+    setMessages((prev) => [...prev, userMessage]);
+    setIsLoading(true);
+
+    try {
+      const data = await sendPromptToBackend({
+        prompt,
+        conversationId,
+      });
+
+      const assistantMessage: ChatMessage = {
+        id: crypto.randomUUID(),
+        role: "assistant",
+        content: data.answer,
+      };
+
+      setMessages((prev) => [...prev, assistantMessage]);
+
+      if (data.conversationId) {
+        setConversationId(data.conversationId);
+      }
+    } catch {
+      const errorMessage: ChatMessage = {
+        id: crypto.randomUUID(),
+        role: "assistant",
+        content:
+          "Ha ocurrido un error al conectar con el backend. Inténtalo de nuevo.",
+      };
+
+      setMessages((prev) => [...prev, errorMessage]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <main className="min-h-screen bg-neutral-950 text-neutral-100 flex flex-col">
-      <section className="flex-1 flex flex-col items-center justify-center px-4">
-        <div className="w-full max-w-3xl flex flex-col items-center">
-          {messages.length === 0 ? (
-            <div className="text-center mb-10">
+      {!hasStartedConversation ? (
+        <section className="flex flex-1 flex-col items-center justify-center px-4">
+          <div className="w-full max-w-3xl">
+            <div className="mb-10 text-center">
               <h1 className="text-3xl md:text-5xl font-semibold tracking-tight">
                 ¿En qué te puedo ayudar?
               </h1>
               <p className="mt-4 text-neutral-400 text-sm md:text-base">
-                Pregúntame sobre vuelos, destinos, precios o recomendaciones de viaje.
+                Pregúntame sobre vuelos, destinos, precios o recomendaciones de
+                viaje.
               </p>
             </div>
-          ) : (
-            <div className="w-full mb-8 space-y-4">
-              {messages.map((message, index) => (
-                <div
-                  key={index}
-                  className="ml-auto max-w-[85%] md:max-w-[70%] rounded-2xl bg-neutral-800 px-4 py-3 text-sm md:text-base"
-                >
-                  {message}
-                </div>
+
+            <ChatInput onSubmit={handleSendPrompt} disabled={isLoading} />
+
+            <p className="mt-3 text-center text-xs text-neutral-500">
+              La IA puede cometer errores. Verifica siempre precios y
+              disponibilidad.
+            </p>
+          </div>
+        </section>
+      ) : (
+        <section className="flex flex-1 flex-col">
+          <div className="flex-1 overflow-y-auto px-4 py-6">
+            <div className="mx-auto flex w-full max-w-3xl flex-col gap-4">
+              {messages.map((message) => (
+                <MessageBubble
+                  key={message.id}
+                  role={message.role}
+                  text={message.content}
+                />
               ))}
+
+              {isLoading && (
+                <MessageBubble role="assistant" text="Pensando..." />
+              )}
             </div>
-          )}
+          </div>
 
-          <form
-            onSubmit={handleSubmit}
-            className="w-full rounded-3xl border border-neutral-800 bg-neutral-900 shadow-lg"
-          >
-            <div className="flex items-end gap-3 p-3">
-              <textarea
-                value={prompt}
-                onChange={(e) => setPrompt(e.target.value)}
-                placeholder="Escribe tu mensaje..."
-                rows={1}
-                className="max-h-40 min-h-12 flex-1 resize-none bg-transparent px-3 py-3 text-sm md:text-base outline-none placeholder:text-neutral-500"
-              />
+          <div className="sticky bottom-0 border-t border-neutral-900 bg-neutral-950/95 px-4 py-4 backdrop-blur">
+            <div className="mx-auto w-full max-w-3xl">
+              <ChatInput onSubmit={handleSendPrompt} disabled={isLoading} />
 
-              <button
-                type="submit"
-                disabled={!prompt.trim()}
-                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white text-black transition hover:bg-neutral-200 disabled:cursor-not-allowed disabled:bg-neutral-700 disabled:text-neutral-500"
-                aria-label="Enviar mensaje"
-              >
-                ↑
-              </button>
+              <p className="mt-3 text-center text-xs text-neutral-500">
+                La IA puede cometer errores. Verifica siempre precios y
+                disponibilidad.
+              </p>
             </div>
-          </form>
-
-          <p className="mt-3 text-xs text-neutral-500 text-center">
-            La IA puede cometer errores. Verifica siempre precios y disponibilidad.
-          </p>
-        </div>
-      </section>
+          </div>
+        </section>
+      )}
     </main>
   );
 }
