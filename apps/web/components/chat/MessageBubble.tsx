@@ -1,4 +1,4 @@
-import { ChatRole } from "@/lib/types/chat";
+import { ChatRole } from "@/types/chat";
 
 type MessageBubbleProps = {
   role: ChatRole;

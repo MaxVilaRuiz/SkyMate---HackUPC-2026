@@ -1,58 +1,12 @@
 "use client";
 
-import { useState } from "react";
+// import { useState } from "react";
 import { ChatInput } from "@/components/chat/ChatInput";
 import { MessageBubble } from "@/components/chat/MessageBubble";
-import { sendPromptToBackend } from "@/lib/api/chat";
-import { ChatMessage } from "@/lib/types/chat";
+import { useChat } from "@/hooks/useChat";
 
 export default function HomePage() {
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [conversationId, setConversationId] = useState<string | undefined>();
-  const [isLoading, setIsLoading] = useState(false);
-
-  const hasStartedConversation = messages.length > 0;
-
-  const handleSendPrompt = async (prompt: string) => {
-    const userMessage: ChatMessage = {
-      id: crypto.randomUUID(),
-      role: "user",
-      content: prompt,
-    };
-
-    setMessages((prev) => [...prev, userMessage]);
-    setIsLoading(true);
-
-    try {
-      const data = await sendPromptToBackend({
-        prompt,
-        conversationId,
-      });
-
-      const assistantMessage: ChatMessage = {
-        id: crypto.randomUUID(),
-        role: "assistant",
-        content: data.answer,
-      };
-
-      setMessages((prev) => [...prev, assistantMessage]);
-
-      if (data.conversationId) {
-        setConversationId(data.conversationId);
-      }
-    } catch {
-      const errorMessage: ChatMessage = {
-        id: crypto.randomUUID(),
-        role: "assistant",
-        content:
-          "Ha ocurrido un error al conectar con el backend. Inténtalo de nuevo.",
-      };
-
-      setMessages((prev) => [...prev, errorMessage]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const { messages, isLoading, sendMessage, hasStartedConversation } = useChat();
 
   return (
     <main className="min-h-screen bg-neutral-950 text-neutral-100 flex flex-col">
@@ -69,7 +23,7 @@ export default function HomePage() {
               </p>
             </div>
 
-            <ChatInput onSubmit={handleSendPrompt} disabled={isLoading} />
+            <ChatInput onSubmit={sendMessage} disabled={isLoading} />
 
             <p className="mt-3 text-center text-xs text-neutral-500">
               La IA puede cometer errores. Verifica siempre precios y
@@ -97,7 +51,7 @@ export default function HomePage() {
 
           <div className="sticky bottom-0 border-t border-neutral-900 bg-neutral-950/95 px-4 py-4 backdrop-blur">
             <div className="mx-auto w-full max-w-3xl">
-              <ChatInput onSubmit={handleSendPrompt} disabled={isLoading} />
+              <ChatInput onSubmit={sendMessage} disabled={isLoading} />
 
               <p className="mt-3 text-center text-xs text-neutral-500">
                 La IA puede cometer errores. Verifica siempre precios y
