@@ -1,11 +1,14 @@
+import live_request as lr
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional
 from langchain_ollama import ChatOllama
 from langchain.agents import create_agent
-from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.tools import tool
+import uuid
+from typing import Dict, List
 
 # Inicializar la aplicación FastAPI
 app = FastAPI()
@@ -25,27 +28,47 @@ def test_tool(location: str):
     return f"The weather in {location} is currently 273 degrees kelvin."
 
 # Create model
-model = ChatOllama(model="gemma4:e2b", temperature=1.5)
-tools = [test_tool]
-agent = create_agent(model, tools=tools)
+
+model = ChatOllama(model="gemma4:e2b", temperature=0.3, model_kwargs={"think": False})
+tools = [test_tool, lr.search_flights]
+agent = create_agent(model, tools=tools, system_prompt="""You are a friendly and informal travel advisor.
+        Your primary goal is to help users find flights using the Skyscanner tool.
+        Your tone is of an interesting buddy who travels a lot and knows a lot about interesting places all around the world.
+        CRITICAL: 
+        1. If you have enough information (origin, destination, and dates), you MUST call 'search_flights' immediately.
+        2. Do not tell the user you 'will search'; instead, perform the search and then present the results.
+        3. Once you have flight results, summarize the best options for the user.
+        You MUST use the search_flights tool. Convert city names to 3-letter
+        IATA codes (e.g., 'London' to 'LHR') before calling the tool.
+        Always provide dates in year, month, day integers.""")
 
 class SendPromptRequest(BaseModel):
     prompt: str
     conversation_id: Optional[str] = None
 
+history_store: Dict[str, List] = {}
+
 # Definir un endpoint (una ruta)
 @app.post("/")
 def send_prompt_to_agent(request: SendPromptRequest):
-    messages_to_invoke = [
-        {"role": "user", "content": request.prompt}
-    ]
+    # 1. Generate a new ID if it's the first message, otherwise use the existing one
+    conv_id = request.conversation_id or str(uuid.uuid4())
 
-    result = agent.invoke({"messages": messages_to_invoke})
-    print(result["messages"][-1].content)
+    if conv_id not in history_store:
+        history_store[conv_id] = []
+
+    # 3. Add current user message to the history
+    history_store[conv_id].append({"role": "user", "content": request.prompt})
+
+    # 4. Invoke the agent with the entire history for context
+    result = agent.invoke({"messages": history_store[conv_id]})
+
+    # 5. Extract the AI response and update the history
+    ai_message = result["messages"][-1]
+    history_store[conv_id].append(ai_message)
+
+    # 6. Return the answer AND the conversationId
     return {
-        "answer": result["messages"][-1].content,
-        "conversationId": request.conversation_id
+        "answer": ai_message.content,
+        "conversationId": conv_id  # The frontend MUST save this and send it back next time
     }
-    
-    #result = agent.invoke({"messages": [{"role": "user", "content": "What's the weather in San Francisco?"}]})
-    #return {"message": result["messages"][-1].content}
