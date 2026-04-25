@@ -1,16 +1,14 @@
 # Python
 .venv/
-__pycache__/
-*.pyc
-
-# Virtual environments
 venv/
 env/
+**/.venv/
+**/__pycache__/
 
-# Python cache
+__pycache__/
+*.pyc
 *.pyo
 *.pyd
 
-#basurilla
+# Virtualenv config
 pyvenv.cfg
-*.pyd
