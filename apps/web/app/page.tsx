@@ -28,6 +28,18 @@ export default function HomePage() {
               <p className="mx-auto mt-4 max-w-xl text-sm text-slate-500 md:text-base">
                 Not just flights. I help you decide when, where and why to travel, based on your intent, constraints and preferences.
               </p>
+
+              <div className="mt-8">
+                <p className="text-sm font-medium text-slate-400">
+                  Try asking:
+                </p>
+
+                <div className="mt-3 grid gap-2 text-sm text-slate-500">
+                  <p>“I want a 5-day trip in August under €500, flexible destination.”</p>
+                  <p>“Where should I travel if I want culture, food and low crowds?”</p>
+                  <p>“Find me a smart weekend escape from Barcelona.”</p>
+                </div>
+              </div>
             </div>
 
             <ChatInput onSubmit={sendMessage} disabled={isLoading} />
