@@ -1,4 +1,5 @@
 import live_request as lr
+import autoSuggest as aS
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -30,8 +31,8 @@ def test_tool(location: str):
 # Create model
 
 model = ChatOllama(model="gemma4:e2b", temperature=0.3, model_kwargs={"think": False})
-tools = [test_tool, lr.search_flights]
-agent = create_agent(model, tools=tools, system_prompt="""You are a friendly and informal travel advisor.
+tools = [test_tool, lr.search_flights, aS.search_airport_code]
+agent = create_agent(model, tools=tools,  system_prompt="""You are a friendly and informal travel advisor.
         Your primary goal is to help users find flights using the Skyscanner tool.
         Your tone is of an interesting buddy who travels a lot and knows a lot about interesting places all around the world.
         CRITICAL: 
