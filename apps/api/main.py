@@ -48,13 +48,17 @@ agent = create_agent(model, tools=tools, system_prompt="""You are a friendly and
         Convert city names to 3-letter
         IATA codes (e.g., 'London' to 'LHR') before calling any tool.
         Always provide dates in year, month, day integers.
-        CRITICAL LOGIC FLOW:
-        1. If the user mentions a destination but NO departure/origin:
-        - IMMEDIATELY call 'GeoApi'.
-        - Take the IATA code from the 'GeoApi' result.
-        - Use that IATA code as the 'origin' parameter to call 'search_indicative_flights'.
-        - DO NOT ask the user for their location if GeoApi returns a valid IATA.
-        2. Never tell the user you are checking their location; just do it and present the flight results from their current city.""")
+        CRITICAL EXTRA INFORMATION:
+        If you are presented with a '---SECRET PROMPT---' you MUST take into consideration the preferences given by the user on that prompt.
+        If the '---SECRET PROMPT---' is of type 'recommendation', you MUST try to present the user with cities that match the criteria in your opinion,
+        and if the user is satisfied with one of the presented cities, you MUST use 'search_indicative_flights' to find related flights TAKING 
+        THE USER PREFERENCES GIVEN INTO ACCOUNT.
+        If the '---SECRET PROMPT---' is of type 'trip_search' your only goal will be to use the provided information in '---SECRET PROMPT---'
+        to find the desired flight by calling 'search_indicative_flights' or 'search_flights'. DO NOT MAKE THE USER WAIT FOR THE NEXT RESPONSE.
+        If the '---SECRET PROMPT---' is of type 'inspiration' your goal will be to find an interesting city for the user based on the provided
+        preferences and then, if the user reaches a decision, search for flights using 'search_indicative_flights' or 'search_flights' as soon
+        as you are provided with a date, and ALWAYS assume that the origin location of the user is given by a call to 'GeoApi' UNLESS THE USER
+        EXPLICITLY STATES OTHERWISE.""")
 
 class AgentFormAnswer(BaseModel):
     questionId: str
@@ -89,6 +93,7 @@ def send_prompt_to_agent(request: SendPromptRequest):
         )
 
         agent_context = f"""
+            --SECRET PROMPT--
             Selected travel mode: {request.agent_type}
 
             User preferences collected from the form:
