@@ -16,6 +16,8 @@ def search_airport_code(search_term: str):
    You can use this function when you need to search for flights to a specific location but don't know the airport name
    or the IATA code.
    """
+
+   print("AI AGENT CALLED THE FUNCTION search_airport_code")
    url = "https://partners.api.skyscanner.net/apiservices/v3/autosuggest/flights"
   
    body = {

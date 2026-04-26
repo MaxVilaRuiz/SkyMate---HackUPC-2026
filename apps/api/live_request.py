@@ -18,6 +18,8 @@ def search_flights(origin: str, destiny: str, year: int, month: int, day: int, a
     'childrenages' must be a list of integers, or an empty list [] if no children.
     If the user doesn't provide very specific information, you can assume that the date is for this year, for one adult and no children ages
     """
+   
+   print("AI AGENT CALLED THE FUNCTION search_flights")
    url = "https://partners.api.skyscanner.net/apiservices/v3/flights/live/search/create"
   
    body = {
