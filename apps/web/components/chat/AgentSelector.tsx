@@ -1,9 +1,9 @@
 "use client";
 
-import { AgentOption, AgentType } from "@/types/agent";
+import { AgentOption, AgentType, SelectedAgentType } from "@/types/agent";
 
 type AgentSelectorProps = {
-  selectedAgent: AgentType;
+  selectedAgent: SelectedAgentType;
   onChange: (agent: AgentType) => void;
 };
 

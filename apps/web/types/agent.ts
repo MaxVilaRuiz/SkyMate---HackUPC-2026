@@ -1,4 +1,6 @@
-export type AgentType = "" | "trip_search" | "recommendation" | "inspiration";
+export type AgentType = "trip_search" | "recommendation" | "inspiration";
+
+export type SelectedAgentType = AgentType | null;
 
 export type AgentOption = {
   id: AgentType;

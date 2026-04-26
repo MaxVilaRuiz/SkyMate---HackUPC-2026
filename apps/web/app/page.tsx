@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { AgentSelector } from "@/components/chat/AgentSelector";
-import { AgentType } from "@/types/agent";
+import { AgentPreferenceForm } from "@/components/chat/AgentPreferenceForm";
+import { AgentType, SelectedAgentType } from "@/types/agent";
 import { ChatInput } from "@/components/chat/ChatInput";
 import { MessageBubble } from "@/components/chat/MessageBubble";
 import { useChat } from "@/hooks/useChat";
@@ -10,7 +11,14 @@ import UserMenuButton from "@/components/UserMenuButton";
 
 export default function HomePage() {
   const { messages, isLoading, sendMessage, hasStartedConversation } = useChat();
-  const [selectedAgent, setSelectedAgent] = useState<AgentType>("");
+  const [selectedAgent, setSelectedAgent] = useState<SelectedAgentType>(null);
+  const [isAgentFormOpen, setIsAgentFormOpen] = useState(false);
+  const [agentAnswers, setAgentAnswers] = useState<string[]>([]);
+
+  const handleAgentClick = (agent: AgentType) => {
+    setSelectedAgent(agent);
+    setIsAgentFormOpen(true);
+  };
 
   return (
     <main className="flex min-h-screen flex-col bg-gradient-to-b from-[#EAF6FF] via-white to-[#F8FBFF] text-slate-900">
@@ -54,7 +62,7 @@ export default function HomePage() {
 
             <AgentSelector
               selectedAgent={selectedAgent}
-              onChange={setSelectedAgent}
+              onChange={handleAgentClick}
             />
 
             <p className="mt-4 text-center text-xs text-slate-400">
@@ -110,6 +118,17 @@ export default function HomePage() {
             </div>
           </div>
         </section>
+      )}
+
+      {isAgentFormOpen && selectedAgent && (
+        <AgentPreferenceForm
+          agentType={selectedAgent}
+          onClose={() => setIsAgentFormOpen(false)}
+          onComplete={(answers) => {
+            setAgentAnswers(answers);
+            setIsAgentFormOpen(false);
+          }}
+        />
       )}
     </main>
   );
