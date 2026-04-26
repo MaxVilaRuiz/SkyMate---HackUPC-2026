@@ -101,7 +101,7 @@ def send_prompt_to_agent(request: SendPromptRequest):
         """
 
     # 3. Add current user message to the history
-    history_store[conv_id].append({"role": "user", "content": request.prompt})
+    history_store[conv_id].append({"role": "user", "content": user_content})
 
     # 4. Invoke the agent with the entire history for context
     result = agent.invoke({"messages": history_store[conv_id]})
