@@ -5,3 +5,9 @@ export type AgentOption = {
   label: string;
   icon: string;
 };
+
+export type AgentQuestion = {
+    id: string;
+    title: string;
+    options: string[];
+  };
