@@ -1,24 +1,6 @@
-import { AgentQuestion, AgentType } from "@/types/agent";
+import { AgentQuestion } from "@/types/agent";
 
-export const AGENT_QUESTIONS: Record<AgentType, AgentQuestion[]> = {
-  trip_search: [
-    {
-      id: "destination",
-      title: "Do you already know where you want to go?",
-      options: ["Yes, I have a destination", "No, I’m flexible"],
-    },
-    {
-      id: "dates",
-      title: "How flexible are your dates?",
-      options: ["Exact dates", "Flexible dates"],
-    },
-    {
-      id: "priority",
-      title: "What matters most?",
-      options: ["Cheapest option", "Best travel experience"],
-    },
-  ],
-
+export const AGENT_QUESTIONS = {
   recommendation: [
     {
       id: "goal",
@@ -54,4 +36,4 @@ export const AGENT_QUESTIONS: Record<AgentType, AgentQuestion[]> = {
       options: ["Safe but original", "Surprise me completely"],
     },
   ],
-};
+} satisfies Record<"recommendation" | "inspiration", AgentQuestion[]>;
