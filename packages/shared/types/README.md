@@ -1,1 +1,0 @@
-Include the shared types that will use the web and the api services.

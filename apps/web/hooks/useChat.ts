@@ -3,13 +3,24 @@
 import { useState } from "react";
 import { sendPromptToBackend } from "@/lib/api/chat";
 import { ChatMessage } from "@/types/chat";
+import { AgentFormAnswer, SelectedAgentType } from "@/types/agent";
+
+type SendMessageParams = {
+  prompt: string;
+  agentType: SelectedAgentType;
+  agentAnswers: AgentFormAnswer[];
+};
 
 export function useChat() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [conversationId, setConversationId] = useState<string | undefined>();
   const [isLoading, setIsLoading] = useState(false);
 
-  const sendMessage = async (prompt: string) => {
+  const sendMessage = async ({
+    prompt,
+    agentType,
+    agentAnswers,
+  }: SendMessageParams) => {
     const userMessage: ChatMessage = {
       id: crypto.randomUUID(),
       role: "user",
@@ -23,6 +34,8 @@ export function useChat() {
       const data = await sendPromptToBackend({
         prompt,
         conversationId,
+        agentType,
+        agentAnswers: agentType ? agentAnswers : [],
       });
 
       const assistantMessage: ChatMessage = {

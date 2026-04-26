@@ -26,9 +26,6 @@ class FlightSearchSchema(BaseModel):
     start_month: Optional[int] = Field(None, description="Month for fixed date or start of range.")
     start_day: Optional[int] = Field(None, description="Day for fixed date.")
 
-    end_year: Optional[int] = Field(None, description="Year for the end of a date range.")
-    end_month: Optional[int] = Field(None, description="Month for the end of a date range.")
-
 @tool(args_schema=FlightSearchSchema)
 def search_indicative_flights(
     origin: str,

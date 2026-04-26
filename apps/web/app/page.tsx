@@ -1,8 +1,10 @@
 "use client";
 
-
-import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { AgentSelector } from "@/components/chat/AgentSelector";
+import { AgentPreferenceForm } from "@/components/agent-preferences/AgentPreferenceForm";
+import { AgentFormAnswer, AgentType, SelectedAgentType } from "@/types/agent";
 import { ChatInput } from "@/components/chat/ChatInput";
 import { MessageBubble } from "@/components/chat/MessageBubble";
 import { useChat } from "@/hooks/useChat";
@@ -10,6 +12,15 @@ import UserMenuButton from "@/components/UserMenuButton";
 
 export default function HomePage() {
   const { messages, isLoading, sendMessage, hasStartedConversation } = useChat();
+  const [selectedAgent, setSelectedAgent] = useState<SelectedAgentType>(null);
+  const [isAgentFormOpen, setIsAgentFormOpen] = useState(false);
+  const [agentAnswers, setAgentAnswers] = useState<AgentFormAnswer[]>([]);
+
+  const handleAgentClick = (agent: AgentType) => {
+    setSelectedAgent(agent);
+    setAgentAnswers([]);
+    setIsAgentFormOpen(true);
+  };
 
   const router = useRouter();
   const [fading, setFading] = useState(false);
@@ -77,7 +88,21 @@ export default function HomePage() {
               </div>
             </div>
 
-            <ChatInput onSubmit={sendMessage} disabled={isLoading} />
+            <ChatInput
+              onSubmit={(prompt) =>
+                sendMessage({
+                  prompt,
+                  agentType: selectedAgent,
+                  agentAnswers,
+                })
+              }
+              disabled={isLoading}
+            />
+
+            <AgentSelector
+              selectedAgent={selectedAgent}
+              onChange={handleAgentClick}
+            />
 
             <p className="mt-4 text-center text-xs text-slate-400">
               AI suggestions are based on available data and reasoning. Always verify final details before booking.
@@ -124,7 +149,16 @@ export default function HomePage() {
 
           <div className="sticky bottom-0 border-t border-sky-100 bg-white/90 px-4 py-4 backdrop-blur">
             <div className="mx-auto w-full max-w-3xl">
-              <ChatInput onSubmit={sendMessage} disabled={isLoading} />
+            <ChatInput
+              onSubmit={(prompt) =>
+                sendMessage({
+                  prompt,
+                  agentType: selectedAgent,
+                  agentAnswers,
+                })
+              }
+              disabled={isLoading}
+            />
 
               <p className="mt-3 text-center text-xs text-slate-400">
                 AI suggestions are based on available data and reasoning. Always verify final details before booking.
@@ -152,6 +186,18 @@ export default function HomePage() {
             Anar a Reels
           </button>
       )
+      )}
+
+      {isAgentFormOpen && selectedAgent && (
+        <AgentPreferenceForm
+          agentType={selectedAgent}
+          onClose={() => setIsAgentFormOpen(false)}
+          onComplete={(answers) => {
+            setAgentAnswers(answers);
+            setIsAgentFormOpen(false);
+          }}
+        />
+      )}
     </main>
   );
 }

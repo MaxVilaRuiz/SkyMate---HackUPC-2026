@@ -69,7 +69,6 @@ def search_flights(origin: str, destiny: str, year: int, month: int, day: int, a
    poll_url = f"https://partners.api.skyscanner.net/apiservices/v3/flights/live/search/poll/{session_token}"
    time.sleep(2)
    poll_resp = requests.post(poll_url, headers=headers)
-   print(poll_resp.json())
    data = poll_resp.json()["content"]
 
    itineraries = data["results"]["itineraries"]
