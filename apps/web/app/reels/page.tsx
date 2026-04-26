@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 
 import { useEffect, useState } from "react";
 
-const videos = ["/Video.webm", "/Video2.webm"];
+const videos = ["/BCN.mp4", "/NYbo.mp4"];
 
 
 
@@ -63,26 +63,26 @@ export default function ReelsPage() {
           inset: 0,
           background: `
             radial-gradient(circle at center,
-              rgba(25, 25, 25, 1) 0%,
-              rgba(35, 35, 35, 0.95) 25%,
-              rgba(173, 215, 255, 0.64) 70%,
-              rgba(170, 214, 255, 0.18) 100%
+              rgba(28, 32, 40, 1) 0%,        /* centre fosc suau (no negre) */
+              rgba(50, 60, 80, 0.85) 30%,    /* blau gris */
+              rgba(160, 200, 255, 0.18) 65%, /* blau cel molt suau */
+              rgba(230, 240, 255, 0.25) 100% /* blanc molt difuminat */
             ),
             conic-gradient(
               from 0deg,
-              transparent 0deg 40deg,
-              rgba(173, 215, 255, 0.26) 40deg 50deg,
-              transparent 50deg 130deg,
-              rgba(173, 215, 255, 0.28) 130deg 140deg,
-              transparent 140deg 220deg,
-              rgba(173, 215, 255, 0.26) 220deg 230deg,
-              transparent 230deg 310deg,
-              rgba(173, 215, 255, 0.29) 310deg 320deg,
-              transparent 320deg 360deg
+              transparent 0deg 45deg,
+              rgba(160, 200, 255, 0.12) 45deg 55deg,
+              transparent 55deg 135deg,
+              rgba(180, 210, 255, 0.12) 135deg 145deg,
+              transparent 145deg 225deg,
+              rgba(160, 200, 255, 0.12) 225deg 235deg,
+              transparent 235deg 315deg,
+              rgba(180, 210, 255, 0.12) 315deg 325deg,
+              transparent 325deg 360deg
             )
           `,
-          filter: "blur(70px)",
-          transform: "scale(1.4)",
+          filter: "blur(80px)",   // més suau
+          transform: "scale(1.5)",
         }}
       />
 
