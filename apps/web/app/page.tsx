@@ -1,5 +1,8 @@
 "use client";
 
+import { useState } from "react";
+import { AgentSelector } from "@/components/chat/AgentSelector";
+import { AgentType } from "@/types/agent";
 import { ChatInput } from "@/components/chat/ChatInput";
 import { MessageBubble } from "@/components/chat/MessageBubble";
 import { useChat } from "@/hooks/useChat";
@@ -7,6 +10,7 @@ import UserMenuButton from "@/components/UserMenuButton";
 
 export default function HomePage() {
   const { messages, isLoading, sendMessage, hasStartedConversation } = useChat();
+  const [selectedAgent, setSelectedAgent] = useState<AgentType>("");
 
   return (
     <main className="flex min-h-screen flex-col bg-gradient-to-b from-[#EAF6FF] via-white to-[#F8FBFF] text-slate-900">
@@ -47,6 +51,11 @@ export default function HomePage() {
             </div>
 
             <ChatInput onSubmit={sendMessage} disabled={isLoading} />
+
+            <AgentSelector
+              selectedAgent={selectedAgent}
+              onChange={setSelectedAgent}
+            />
 
             <p className="mt-4 text-center text-xs text-slate-400">
               AI suggestions are based on available data and reasoning. Always verify final details before booking.
