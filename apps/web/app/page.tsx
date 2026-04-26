@@ -186,7 +186,6 @@ export default function HomePage() {
             Anar a Reels
           </button>
       )
-      )}
 
       {isAgentFormOpen && selectedAgent && (
         <AgentPreferenceForm
