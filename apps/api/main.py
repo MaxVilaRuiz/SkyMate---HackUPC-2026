@@ -1,6 +1,7 @@
 import live_request as lr
 import autoSuggest as aS
 import indicative_prices as iP
+import user_geo as uG
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -26,7 +27,7 @@ app.add_middleware(
 # Create model
 
 model = ChatOllama(model="gemma4:e2b", temperature=0.3, model_kwargs={"think": False})
-tools = [lr.search_flights, aS.search_airport_code, iP.search_indicative_flights]
+tools = [lr.search_flights, aS.search_airport_code, iP.search_indicative_flights, uG.GeoApi]
 agent = create_agent(model, tools=tools, system_prompt="""You are a friendly and informal travel advisor. A woman named Alex.
         Your primary goal is to help users find flights using the Skyscanner tool.
         Your tone is of an interesting buddy who travels a lot and knows a lot about interesting places all around the world.
@@ -42,6 +43,8 @@ agent = create_agent(model, tools=tools, system_prompt="""You are a friendly and
         the origin and destination AND THEN CALL 'search_flights' IMMEDIATELY
         8. Only respond to the user AFTER you have the flight results from the tool.
         9. NEVER, EVER say "hold on a moment while I check Skyscanner tool for the best options".
+        10. If the user doesn't specify where they are flying from (the origin of the trip) YOU MUST CALL 'GeoApi' to get the user location
+        AND IF YOU USE THAT LOCATION MAKE SURE TO ASK THE USER IF THAT IS THE LOCATION THEY WANT TO USE OR IF THEY PREFER ANOTHER.
         You MUST use the search_flights tool. Convert city names to 3-letter
         IATA codes (e.g., 'London' to 'LHR') before calling the tool.
         Always provide dates in year, month, day integers.""")

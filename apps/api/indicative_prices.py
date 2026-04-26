@@ -45,6 +45,8 @@ def search_indicative_flights(
     Returns the best flight options for different time ranges depending on price. 
     IMPORTANT: 'origin' and 'destiny' must be 3-letter IATA codes (e.g., 'LHR', 'JFK').
     """
+   
+   print("AI AGENT CALLED THE FUNCTION search_indicative_flights")
    url = "https://partners.api.skyscanner.net/apiservices/v3/flights/indicative/search"
 
    leg = {
