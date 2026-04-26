@@ -53,20 +53,20 @@ export default function UserMenuButton({ onFormComplete }: UserMenuProps) {
   return (
     <>
       <div className="absolute left-4 top-4 z-50 md:fixed">
-        <button onClick={() => setIsOpen(!isOpen)} className="relative flex h-11 w-11 items-center justify-center rounded-full border border-sky-100 bg-white/90 shadow-sm backdrop-blur transition-colors hover:bg-sky-50 focus:outline-none">
+        <button onClick={handleOpenProfile} className="relative flex h-11 w-11 items-center justify-center rounded-full border border-sky-100 bg-white/90 shadow-sm backdrop-blur transition-colors hover:bg-sky-50 focus:outline-none">
           <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
           </svg>
         </button>
 
-        {isOpen && (
+        {/* {isOpen && (
           <div className="absolute left-0 mt-3 w-48 overflow-hidden rounded-xl border border-sky-100 bg-white shadow-xl">
             <ul className="text-sm font-medium text-slate-700">
               <li onClick={handleOpenProfile} className="cursor-pointer border-b border-slate-100 px-4 py-3 hover:bg-slate-50">👤 Mi Perfil</li>
               <li onClick={handleOpenForm} className="cursor-pointer px-4 py-3 hover:bg-slate-50">📝 Formulari</li>
             </ul>
           </div>
-        )}
+        )} */}
       </div>
 
       {showProfile && (

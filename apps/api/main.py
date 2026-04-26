@@ -9,7 +9,7 @@ from langchain.agents import create_agent
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.tools import tool
 import uuid
-from typing import Dict, List
+from typing import Optional, Dict, List
 
 # Inicializar la aplicación FastAPI
 app = FastAPI()
@@ -49,9 +49,16 @@ agent = create_agent(model, tools=tools, system_prompt="""You are a friendly and
         IATA codes (e.g., 'London' to 'LHR') before calling the tool.
         Always provide dates in year, month, day integers.""")
 
+class AgentFormAnswer(BaseModel):
+    questionId: str
+    question: str
+    answer: str
+
 class SendPromptRequest(BaseModel):
     prompt: str
     conversation_id: Optional[str] = None
+    agent_type: Optional[str] = None
+    agent_answers: List[AgentFormAnswer] = []
 
 history_store: Dict[str, List] = {}
 
@@ -63,6 +70,35 @@ def send_prompt_to_agent(request: SendPromptRequest):
 
     if conv_id not in history_store:
         history_store[conv_id] = []
+
+    agent_context = ""
+
+    if request.agent_type and request.agent_answers:
+        formatted_answers = "\n".join(
+            [
+                f"- {item.question}: {item.answer}"
+                for item in request.agent_answers
+            ]
+        )
+
+        agent_context = f"""
+            Selected travel mode: {request.agent_type}
+
+            User preferences collected from the form:
+            {formatted_answers}
+
+            Use these preferences as context when answering. Do not repeat them mechanically unless useful.
+        """
+
+    user_content = request.prompt
+
+    if agent_context:
+        user_content = f"""
+            {agent_context}
+
+            User prompt:
+            {request.prompt}
+        """
 
     # 3. Add current user message to the history
     history_store[conv_id].append({"role": "user", "content": request.prompt})
