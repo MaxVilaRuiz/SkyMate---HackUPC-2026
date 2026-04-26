@@ -24,21 +24,41 @@ export const AGENT_QUESTIONS = {
         },
     ],
 
-  inspiration: [
-    {
-      id: "mood",
-      title: "What kind of feeling are you looking for?",
-      options: ["Calm and beautiful", "Unexpected and exciting"],
-    },
-    {
-      id: "vibe",
-      title: "What kind of place attracts you more?",
-      options: ["Hidden nature", "Lively local culture"],
-    },
-    {
-      id: "surprise",
-      title: "How adventurous should the suggestion be?",
-      options: ["Safe but original", "Surprise me completely"],
-    },
-  ],
+    inspiration: [
+        {
+          id: "trip_feeling",
+          title: "What should this trip make you feel?",
+          options: ["Inspired and curious", "Calm and disconnected"],
+        },
+        {
+          id: "environment",
+          title: "What kind of place pulls you in?",
+          options: ["Culture, food & museums", "Nature, silence & landscapes"],
+        },
+        {
+          id: "landscape",
+          title: "Where would you rather wake up?",
+          options: ["Near the sea", "Surrounded by mountains"],
+        },
+        {
+          id: "pace",
+          title: "What pace sounds better?",
+          options: ["Walkable city days", "Slow rural mornings"],
+        },
+        {
+          id: "climate",
+          title: "What climate matches your mood?",
+          options: ["Warm, bright and sunny", "Cold, cozy and atmospheric"],
+        },
+        {
+          id: "budget_style",
+          title: "How should the trip feel financially?",
+          options: ["Smart and low-cost", "Premium and effortless"],
+        },
+        {
+          id: "surprise_level",
+          title: "How far from the obvious should I go?",
+          options: ["Slightly unexpected", "Completely surprise me"],
+        },
+    ],
 } satisfies Record<"recommendation" | "inspiration", AgentQuestion[]>;
