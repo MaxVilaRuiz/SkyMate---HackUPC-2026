@@ -1,23 +1,28 @@
 import { AgentQuestion } from "@/types/agent";
 
 export const AGENT_QUESTIONS = {
-  recommendation: [
-    {
-      id: "goal",
-      title: "What is the main goal of your trip?",
-      options: ["Relax and disconnect", "Explore culture and food"],
-    },
-    {
-      id: "style",
-      title: "What travel style fits you best?",
-      options: ["Slow and comfortable", "Active and discovery-driven"],
-    },
-    {
-      id: "crowds",
-      title: "How do you feel about crowds?",
-      options: ["Avoid crowds", "I don’t mind popular places"],
-    },
-  ],
+    recommendation: [
+        {
+            id: "environment",
+            title: "What environment sounds better?",
+            options: ["Beach and sea", "Mountains and nature"],
+        },
+        {
+            id: "place_type",
+            title: "What kind of place do you prefer?",
+            options: ["City energy", "Rural calm"],
+        },
+        {
+            id: "climate",
+            title: "What climate fits your mood?",
+            options: ["Warm and sunny", "Cold and cozy"],
+        },
+        {
+            id: "budget_style",
+            title: "How should we think about budget?",
+            options: ["Low budget", "Premium comfort"],
+        },
+    ],
 
   inspiration: [
     {
