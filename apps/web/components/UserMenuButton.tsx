@@ -1,6 +1,11 @@
 "use client";
 
 import { useState } from "react";
+// Importamos la nueva librería 100% gratuita y sin tokens
+import { ComposableMap, Geographies, Geography } from "@vnedyalk0v/react19-simple-maps";
+
+// Archivo público con las fronteras y nombres de los países
+const geoUrl = "https://unpkg.com/world-atlas@2.0.2/countries-110m.json";
 
 const TRAVEL_QUESTIONS = [
   { id: 1, title: "What environment do you prefer?", opt1: "🏖️ Sun & Beach", opt2: "🏔️ Mountains & Chill" },
@@ -17,12 +22,12 @@ interface UserMenuProps {
 export default function UserMenuButton({ onFormComplete }: UserMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [showForm, setShowForm] = useState(false);
-  const [showProfile, setShowProfile] = useState(false); // Nuevo: Estado para el perfil
+  const [showProfile, setShowProfile] = useState(false);
   
-  // --- ESTADOS DEL PERFIL ---
+  // --- ESTADOS DEL PERFIL Y MAPA ---
   const [userName, setUserName] = useState("");
-  const [experiences, setExperiences] = useState<string[]>([]);
-  const [newExp, setNewExp] = useState("");
+  const [visitedCountries, setVisitedCountries] = useState<string[]>([]);
+  const [newCountry, setNewCountry] = useState("");
 
   // --- LOGICA DEL FORMULARIO 50/50 ---
   const [currentQIndex, setCurrentQIndex] = useState(0);
@@ -42,15 +47,14 @@ export default function UserMenuButton({ onFormComplete }: UserMenuProps) {
     }
   };
 
-  // --- LOGICA DEL PERFIL ---
-  const addExperience = () => {
-    if (newExp.trim() !== "") {
-      const updatedExps = [...experiences, newExp];
-      setExperiences(updatedExps);
-      setNewExp("");
-      
-      // AQUÍ ES DONDE MANDARÍAS LOS DATOS AL BACKEND
-      console.log("Enviando al backend:", { name: userName, experiences: updatedExps });
+  // --- LOGICA DEL MAPA ---
+  const addCountry = () => {
+    const countryName = newCountry.trim();
+    if (countryName !== "" && !visitedCountries.some(c => c.toLowerCase() === countryName.toLowerCase())) {
+      // Formateamos la primera letra mayúscula para que quede bonito en la lista
+      const formattedCountry = countryName.charAt(0).toUpperCase() + countryName.slice(1).toLowerCase();
+      setVisitedCountries([...visitedCountries, formattedCountry]);
+      setNewCountry("");
     }
   };
 
@@ -74,13 +78,13 @@ export default function UserMenuButton({ onFormComplete }: UserMenuProps) {
         )}
       </div>
 
-      {/* --- MODAL DE PERFIL --- */}
+      {/* --- MODAL DE PERFIL CON MAPA --- */}
       {showProfile && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-sm">
-          <div className="flex h-[600px] w-full max-w-lg flex-col rounded-3xl bg-white p-8 shadow-2xl overflow-hidden">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/70 p-4 backdrop-blur-sm">
+          <div className="flex h-[80vh] w-full max-w-5xl flex-col rounded-3xl bg-white p-6 shadow-2xl overflow-hidden">
             
-            {/* Nombre centrado arriba */}
-            <div className="mb-6 flex flex-col items-center">
+            {/* Header del perfil */}
+            <div className="mb-4 flex flex-col items-center shrink-0">
                 <input 
                   type="text" 
                   placeholder="Your Name..." 
@@ -88,43 +92,90 @@ export default function UserMenuButton({ onFormComplete }: UserMenuProps) {
                   onChange={(e) => setUserName(e.target.value)}
                   className="bg-transparent text-center text-3xl font-bold text-slate-800 focus:outline-none placeholder:text-slate-300"
                 />
-                <p className="text-xs text-sky-500 font-semibold uppercase tracking-widest mt-1">Traveler Profile</p>
+                <p className="text-xs text-sky-500 font-semibold uppercase tracking-widest mt-1">Global Traveler</p>
             </div>
 
-            {/* Lista de Experiencias (Scrollable) */}
-            <div className="flex-1 overflow-y-auto mb-6 pr-2 custom-scrollbar">
-                <h3 className="text-sm font-bold text-slate-400 uppercase mb-3">Travel Experiences</h3>
-                {experiences.length === 0 && <p className="text-slate-400 italic text-sm">No experiences added yet...</p>}
-                <div className="space-y-3">
-                    {experiences.map((exp, i) => (
-                        <div key={i} className="p-4 rounded-2xl bg-slate-50 border border-slate-100 text-slate-700 text-sm shadow-sm">
-                            {exp}
+            {/* Contenedor principal: Mapa a la izquierda, Lista a la derecha */}
+            <div className="flex flex-1 gap-6 min-h-0">
+              
+              {/* IZQUIERDA: EL MAPA VECTORIAL */}
+              <div className="flex-[2] flex items-center justify-center relative rounded-2xl overflow-hidden border border-slate-200 shadow-inner bg-sky-50/50 p-4">
+                <ComposableMap 
+                  projectionConfig={{ scale: 140 }} 
+                  className="w-full h-full outline-none"
+                >
+                  <Geographies geography={geoUrl}>
+                    {({ geographies }) =>
+                      geographies.map((geo) => {
+                        // Comprobamos si el nombre del país en el mapa está en nuestra lista
+                        const isVisited = visitedCountries.some(
+                          (c) => c.toLowerCase() === geo.properties.name.toLowerCase()
+                        );
+                        
+                        return (
+                          <Geography
+                            key={geo.rsmKey}
+                            geography={geo}
+                            fill={isVisited ? "#0770E3" : "#E2E8F0"} // Azul si está visitado, gris claro si no
+                            stroke="#FFFFFF" // Bordes blancos
+                            strokeWidth={0.5}
+                            style={{
+                              default: { outline: "none" },
+                              hover: { fill: isVisited ? "#055ab5" : "#cbd5e1", outline: "none" },
+                              pressed: { outline: "none" },
+                            }}
+                          />
+                        );
+                      })
+                    }
+                  </Geographies>
+                </ComposableMap>
+              </div>
+
+              {/* DERECHA: LA LISTA CON SCROLL */}
+              <div className="flex-1 flex flex-col min-w-[250px]">
+                <h3 className="text-sm font-bold text-slate-400 uppercase mb-3">Visited Countries</h3>
+                
+                {/* Lista con scroll */}
+                <div className="flex-1 overflow-y-auto mb-4 pr-2 space-y-2">
+                    {visitedCountries.length === 0 && (
+                      <p className="text-slate-400 italic text-sm text-center mt-10">
+                        Type a country below to light up the map!
+                      </p>
+                    )}
+                    {visitedCountries.map((country, i) => (
+                        <div key={i} className="px-4 py-3 rounded-xl bg-sky-50 border border-sky-100 text-sky-800 font-medium text-sm flex items-center shadow-sm">
+                            📍 {country}
                         </div>
                     ))}
                 </div>
+
+                {/* Input en la parte inferior */}
+                <div className="flex gap-2 bg-slate-100 p-2 rounded-xl shrink-0">
+                    <input 
+                        type="text" 
+                        placeholder="e.g. Spain, Japan..." 
+                        value={newCountry}
+                        onChange={(e) => setNewCountry(e.target.value)}
+                        onKeyDown={(e) => e.key === 'Enter' && addCountry()}
+                        className="flex-1 bg-transparent px-2 py-2 text-sm focus:outline-none"
+                    />
+                    <button onClick={addCountry} className="bg-[#0770E3] text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-blue-700 transition-colors">
+                        Add
+                    </button>
+                </div>
+              </div>
+
             </div>
 
-            {/* Barra de texto para añadir experiencia */}
-            <div className="flex gap-2 bg-slate-100 p-2 rounded-2xl">
-                <input 
-                    type="text" 
-                    placeholder="Tell us about a trip..." 
-                    value={newExp}
-                    onChange={(e) => setNewExp(e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && addExperience()}
-                    className="flex-1 bg-transparent px-3 py-2 text-sm focus:outline-none"
-                />
-                <button onClick={addExperience} className="bg-[#0770E3] text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-blue-700 transition-colors">
-                    Add
-                </button>
-            </div>
-
-            <button onClick={() => setShowProfile(false)} className="mt-6 text-sm font-bold text-slate-400 hover:text-slate-600">Close Profile</button>
+            <button onClick={() => setShowProfile(false)} className="mt-4 text-sm font-bold text-slate-400 hover:text-slate-600 shrink-0">
+              Close Profile
+            </button>
           </div>
         </div>
       )}
 
-      {/* --- MODAL DE FORMULARIO 50/50 (Igual que antes) --- */}
+      {/* --- MODAL DE FORMULARIO 50/50 --- */}
       {showForm && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-sm">
           <div className="w-full max-w-md rounded-3xl bg-white p-8 shadow-2xl">

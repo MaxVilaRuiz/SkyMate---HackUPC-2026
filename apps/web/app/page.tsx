@@ -3,7 +3,7 @@
 import { ChatInput } from "@/components/chat/ChatInput";
 import { MessageBubble } from "@/components/chat/MessageBubble";
 import { useChat } from "@/hooks/useChat";
-import UserMenuButton from "@/components/UserMenuButton"; // <-- Importamos tu nuevo botón
+import UserMenuButton from "../components/UserMenuButton"; // <-- Importamos tu nuevo botón
 
 export default function HomePage() {
   const { messages, isLoading, sendMessage, hasStartedConversation } = useChat();
