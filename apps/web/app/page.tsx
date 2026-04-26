@@ -1,5 +1,8 @@
 "use client";
 
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { ChatInput } from "@/components/chat/ChatInput";
 import { MessageBubble } from "@/components/chat/MessageBubble";
 import { useChat } from "@/hooks/useChat";
@@ -8,6 +11,27 @@ import UserMenuButton from "@/components/UserMenuButton";
 export default function HomePage() {
   const { messages, isLoading, sendMessage, hasStartedConversation } = useChat();
 
+  const router = useRouter();
+  const [fading, setFading] = useState(false);
+
+  const handleClick = () => {
+    setFading(true);
+
+    setTimeout(() => {
+      router.push("/reels");
+    }, 300); // duració de l’animació
+  };
+
+  const [transitioning, setTransitioning] = useState(false);
+
+  const handleGoReels = () => {
+    setTransitioning(true);
+
+    setTimeout(() => {
+      router.push("/reels");
+    }, 300);
+  };
+
   return (
     <main className="flex min-h-screen flex-col bg-gradient-to-b from-[#EAF6FF] via-white to-[#F8FBFF] text-slate-900">
 
@@ -15,7 +39,14 @@ export default function HomePage() {
 
       {!hasStartedConversation ? (
         <section className="flex flex-1 flex-col items-center justify-center px-4">
-          <div className="w-full max-w-3xl">
+          <div 
+            className="w-full max-w-3xl"
+            style={{
+              transition: "filter 0.5s ease, opacity 0.5s ease",
+              filter: transitioning ? "blur(10px)" : "blur(0px)",
+              opacity: transitioning ? 0.6 : 1,
+            }}
+          >
             <div className="mb-10 text-center">
               <div className="mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#0770E3] text-2xl text-white shadow-lg">
                 ✈
@@ -101,7 +132,29 @@ export default function HomePage() {
             </div>
           </div>
         </section>
-      )}
+      )} : (
+         <button
+            onClick={handleGoReels}
+            style={{
+              position: "fixed",
+              top: "90vh",
+              left: "80%",
+              transform: "translateX(-50%)",
+              padding: "8px 12px",
+              fontSize: "14px",
+              borderRadius: "999px",
+              border: "none",
+              cursor: "pointer",
+              backgroundColor: "#111",
+              color: "white",
+            }}
+          >
+            Anar a Reels
+          </button>
+      )
     </main>
   );
 }
+
+
+  
