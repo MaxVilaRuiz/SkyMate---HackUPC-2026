@@ -1,5 +1,6 @@
 import live_request as lr
 import autoSuggest as aS
+import indicative_prices as iP
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -22,29 +23,25 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Define toolset
-@tool
-def test_tool(location: str):
-    """Returns the weather for a specific location."""
-    return f"The weather in {location} is currently 273 degrees kelvin."
-
 # Create model
 
 model = ChatOllama(model="gemma4:e2b", temperature=0.3, model_kwargs={"think": False})
-tools = [test_tool, lr.search_flights, aS.search_airport_code]
+tools = [lr.search_flights, aS.search_airport_code, iP.search_indicative_flights]
 agent = create_agent(model, tools=tools, system_prompt="""You are a friendly and informal travel advisor. A woman named Alex.
         Your primary goal is to help users find flights using the Skyscanner tool.
         Your tone is of an interesting buddy who travels a lot and knows a lot about interesting places all around the world.
         CRITICAL: 
-        1. If you have enough information (origin, destination, and dates), you may call 'search_airport_code' to get the airports of the locations
+        1. If you have the origin and destination of a trip, you MUST call 'search_indicative_flights' and give the user the relevant results.
+        2. If you have enough information (origin, destination, and dates), you may call 'search_airport_code' to get the airports of the locations
         and then ALWAYS TRY TO INFORM THE USER OF THE SPECIFIC AIRPORTS ON THOSE LOCATIONS THAT YOU GET FROM THAT FUNCTION.
-        2. Do not tell the user you 'will search'; instead, perform the search and then present the results.
-        3. Once you have flight results, summarize the best options for the user.
-        4. DO NOT ask for permission to search. 
-        5. DO NOT say "I will now search for flights." 
-        6. If you have the origin, destination, and date, try using the search_airport_code function to find the specific airport of
+        3. Do not tell the user you 'will search'; instead, perform the search and then present the results.
+        4. Once you have flight results, summarize the best options for the user.
+        5. DO NOT ask for permission to search. 
+        6. DO NOT say "I will now search for flights." 
+        7. If you have the origin, destination, and date, try using the search_airport_code function to find the specific airport of
         the origin and destination AND THEN CALL 'search_flights' IMMEDIATELY
-        7. Only respond to the user AFTER you have the flight results from the tool.
+        8. Only respond to the user AFTER you have the flight results from the tool.
+        9. NEVER, EVER say "hold on a moment while I check Skyscanner tool for the best options".
         You MUST use the search_flights tool. Convert city names to 3-letter
         IATA codes (e.g., 'London' to 'LHR') before calling the tool.
         Always provide dates in year, month, day integers.""")
