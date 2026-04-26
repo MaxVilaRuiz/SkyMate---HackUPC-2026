@@ -42,8 +42,8 @@ Instead of just showing flights, SkyMate helps users:
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/MaxVilaRuiz/SkyMate.git
-cd SkyMate
+git clone https://github.com/MaxVilaRuiz/SkyMate---HackUPC-2026.git
+cd SkyMate---HackUPC-2026
 ```
 
 ### 2. Frontend (Next.js)
