@@ -2,23 +2,27 @@
 
 import { useState } from "react";
 import { AGENT_QUESTIONS } from "@/config/agentQuestions";
-import { AgentFormAnswer, AgentType } from "@/types/agent";
+import { AgentFormAnswer } from "@/types/agent";
 
-type AgentPreferenceFormProps = {
-  agentType: AgentType;
+type QuestionFlowAgentType = "recommendation" | "inspiration";
+
+type Props = {
+  agentType: QuestionFlowAgentType;
   onClose: () => void;
   onComplete: (answers: AgentFormAnswer[]) => void;
+  initialAnswers?: AgentFormAnswer[];
 };
 
-export function AgentPreferenceForm({
+export function QuestionFlowForm({
   agentType,
   onClose,
   onComplete,
-}: AgentPreferenceFormProps) {
+  initialAnswers = [],
+}: Props) {
   const questions = AGENT_QUESTIONS[agentType];
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [answers, setAnswers] = useState<AgentFormAnswer[]>([]);
+  const [answers, setAnswers] = useState<AgentFormAnswer[]>(initialAnswers);
 
   const currentQuestion = questions[currentQuestionIndex];
 

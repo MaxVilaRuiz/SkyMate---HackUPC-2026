@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { AgentSelector } from "@/components/chat/AgentSelector";
-import { AgentPreferenceForm } from "@/components/chat/AgentPreferenceForm";
+import { AgentPreferenceForm } from "@/components/agent-preferences/AgentPreferenceForm";
 import { AgentFormAnswer, AgentType, SelectedAgentType } from "@/types/agent";
 import { ChatInput } from "@/components/chat/ChatInput";
 import { MessageBubble } from "@/components/chat/MessageBubble";

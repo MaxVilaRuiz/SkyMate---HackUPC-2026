@@ -19,3 +19,21 @@ export type AgentFormAnswer = {
     question: string;
     answer: string;
 };
+
+export type TripType = "round_trip" | "one_way";
+
+export type TripSearchFormState = {
+  originCity: string;
+  destinationCity: string;
+  year: string;
+  month: string;
+  day: string;
+  tripType: TripType;
+  adults: string;
+  children: string;
+};
+
+export type RecommendationBaseFormState = Omit<
+  TripSearchFormState,
+  "destinationCity"
+>;
