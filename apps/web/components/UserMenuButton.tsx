@@ -115,7 +115,7 @@ export default function UserMenuButton({ onFormComplete }: UserMenuProps) {
         </div>
       )}
 
-      {showForm && (
+      {/* {showForm && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-sm">
           <div className="w-full max-w-md rounded-3xl bg-white p-8 shadow-2xl">
             <h2 className="mb-8 text-center text-2xl font-bold text-slate-800">{TRAVEL_QUESTIONS[currentQIndex].title}</h2>
@@ -126,7 +126,7 @@ export default function UserMenuButton({ onFormComplete }: UserMenuProps) {
             <button onClick={() => setShowForm(false)} className="w-full text-center text-xs font-semibold text-red-400">Close</button>
           </div>
         </div>
-      )}
+      )} */}
     </>
   );
 }

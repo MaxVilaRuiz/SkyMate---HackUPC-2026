@@ -12,4 +12,10 @@ export type AgentQuestion = {
     id: string;
     title: string;
     options: string[];
-  };
+};
+
+export type AgentFormAnswer = {
+    questionId: string;
+    question: string;
+    answer: string;
+};

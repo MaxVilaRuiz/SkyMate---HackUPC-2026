@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { AgentSelector } from "@/components/chat/AgentSelector";
 import { AgentPreferenceForm } from "@/components/chat/AgentPreferenceForm";
-import { AgentType, SelectedAgentType } from "@/types/agent";
+import { AgentFormAnswer, AgentType, SelectedAgentType } from "@/types/agent";
 import { ChatInput } from "@/components/chat/ChatInput";
 import { MessageBubble } from "@/components/chat/MessageBubble";
 import { useChat } from "@/hooks/useChat";
@@ -13,10 +13,11 @@ export default function HomePage() {
   const { messages, isLoading, sendMessage, hasStartedConversation } = useChat();
   const [selectedAgent, setSelectedAgent] = useState<SelectedAgentType>(null);
   const [isAgentFormOpen, setIsAgentFormOpen] = useState(false);
-  const [agentAnswers, setAgentAnswers] = useState<string[]>([]);
+  const [agentAnswers, setAgentAnswers] = useState<AgentFormAnswer[]>([]);
 
   const handleAgentClick = (agent: AgentType) => {
     setSelectedAgent(agent);
+    setAgentAnswers([]);
     setIsAgentFormOpen(true);
   };
 
@@ -58,7 +59,16 @@ export default function HomePage() {
               </div>
             </div>
 
-            <ChatInput onSubmit={sendMessage} disabled={isLoading} />
+            <ChatInput
+              onSubmit={(prompt) =>
+                sendMessage({
+                  prompt,
+                  agentType: selectedAgent,
+                  agentAnswers,
+                })
+              }
+              disabled={isLoading}
+            />
 
             <AgentSelector
               selectedAgent={selectedAgent}
@@ -110,7 +120,16 @@ export default function HomePage() {
 
           <div className="sticky bottom-0 border-t border-sky-100 bg-white/90 px-4 py-4 backdrop-blur">
             <div className="mx-auto w-full max-w-3xl">
-              <ChatInput onSubmit={sendMessage} disabled={isLoading} />
+            <ChatInput
+              onSubmit={(prompt) =>
+                sendMessage({
+                  prompt,
+                  agentType: selectedAgent,
+                  agentAnswers,
+                })
+              }
+              disabled={isLoading}
+            />
 
               <p className="mt-3 text-center text-xs text-slate-400">
                 AI suggestions are based on available data and reasoning. Always verify final details before booking.

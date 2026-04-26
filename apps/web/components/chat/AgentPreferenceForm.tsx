@@ -2,12 +2,12 @@
 
 import { useState } from "react";
 import { AGENT_QUESTIONS } from "@/config/agentQuestions";
-import { AgentType } from "@/types/agent";
+import { AgentFormAnswer, AgentType } from "@/types/agent";
 
 type AgentPreferenceFormProps = {
   agentType: AgentType;
   onClose: () => void;
-  onComplete: (answers: string[]) => void;
+  onComplete: (answers: AgentFormAnswer[]) => void;
 };
 
 export function AgentPreferenceForm({
@@ -18,12 +18,18 @@ export function AgentPreferenceForm({
   const questions = AGENT_QUESTIONS[agentType];
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [answers, setAnswers] = useState<string[]>([]);
+  const [answers, setAnswers] = useState<AgentFormAnswer[]>([]);
 
   const currentQuestion = questions[currentQuestionIndex];
 
   const handleAnswer = (answer: string) => {
-    const nextAnswers = [...answers, answer];
+    const nextAnswer: AgentFormAnswer = {
+      questionId: currentQuestion.id,
+      question: currentQuestion.title,
+      answer,
+    };
+
+    const nextAnswers = [...answers, nextAnswer];
 
     if (currentQuestionIndex < questions.length - 1) {
       setAnswers(nextAnswers);
